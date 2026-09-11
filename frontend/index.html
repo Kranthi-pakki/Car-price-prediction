@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Price Prediction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <h1>Car Price Prediction</h1>
+            <p class="subtitle">Predict the selling price of a used car</p>
+
+            <form id="predictionForm">
+
+                <div class="form-group">
+                    <label for="carName">Car Name</label>
+                    <input type="text" id="carName" placeholder="e.g. swift" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <input type="number" id="year" placeholder="e.g. 2018" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="presentPrice">Present Price (Lakhs)</label>
+                    <input type="number" id="presentPrice" step="0.01" placeholder="e.g. 6.50" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="kmsDriven">Kilometers Driven</label>
+                    <input type="number" id="kmsDriven" placeholder="e.g. 30000" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="fuelType">Fuel Type</label>
+                    <select id="fuelType" required>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Cng">CNG</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sellerType">Seller Type</label>
+                    <select id="sellerType" required>
+                        <option value="Dealer">Dealer</option>
+                        <option value="Individual">Individual</option>
+                </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="transmission">Transmission</label>
+                    <select id="transmission" required>
+                        <option value="Manual">Manual</option>
+                        <option value="Automatic">Automatic</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="owner">Previous Owners</label>
+                    <select id="owner" required>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+
+                <button type="submit">Predict Price</button>
+
+            </form>
+
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
