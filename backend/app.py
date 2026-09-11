@@ -1,10 +1,15 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import joblib
 import pandas as pd
 import os
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_folder="../frontend",
+    static_url_path=""
+)
+
 CORS(app)
 
 # Load trained model
@@ -28,9 +33,7 @@ feature_columns = joblib.load(FEATURE_PATH)
 
 @app.route("/")
 def home():
-    return jsonify({
-        "message": "Car Price Prediction API is running"
-    })
+    return send_from_directory("../frontend", "index.html")
 
 
 @app.route("/predict", methods=["POST"])
@@ -38,13 +41,12 @@ def predict():
     try:
         data = request.get_json()
 
-        # Create input dataframe
         input_data = pd.DataFrame([data])
 
         # Create Car Age
         input_data["Car_Age"] = 2026 - input_data["Year"]
 
-        # Extract Brand using the same logic used in the notebook
+        # Extract Brand
         input_data["Brand"] = (
             input_data["Car_Name"]
             .astype(str)
@@ -53,16 +55,6 @@ def predict():
         )
 
         # Convert categorical columns to string
-        input_data["Fuel_Type"] = input_data["Fuel_Type"].astype(str)
-        input_data["Seller_Type"] = input_data["Seller_Type"].astype(str)
-        input_data["Transmission"] = input_data["Transmission"].astype(str)
-        input_data["Owner"] = input_data["Owner"].astype(str)
-        input_data["Brand"] = input_data["Brand"].astype(str)
-
-        # Remove Car_Name because it was removed before model training
-        input_data = input_data.drop(columns=["Car_Name"])
-
-        # One-hot encode categorical columns
         categorical_columns = [
             "Fuel_Type",
             "Seller_Type",
@@ -71,6 +63,13 @@ def predict():
             "Brand"
         ]
 
+        for column in categorical_columns:
+            input_data[column] = input_data[column].astype(str)
+
+        # Remove Car_Name
+        input_data = input_data.drop(columns=["Car_Name"])
+
+        # One-hot encoding
         input_data = pd.get_dummies(
             input_data,
             columns=categorical_columns,
@@ -78,13 +77,13 @@ def predict():
             dtype=int
         )
 
-        # Match exactly the features used during training
+        # Match training features
         input_data = input_data.reindex(
             columns=feature_columns,
             fill_value=0
         )
 
-        # Make prediction
+        # Prediction
         prediction = model.predict(input_data)[0]
 
         return jsonify({
@@ -98,4 +97,8 @@ def predict():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
